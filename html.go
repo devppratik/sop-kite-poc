@@ -15,7 +15,7 @@ func traverseHTMLDoc(n *html.Node, textView *tview.TextView) int {
 		case "a":
 			for _, attr := range n.Attr {
 				if attr.Key == "href" {
-					fmt.Fprintf(textView, `["%d"]%s[""]`, numLinks, attr.Val)
+					fmt.Fprintf(textView, `["%d"][blue]%s - [white][""]`, numLinks, attr.Val)
 					numLinks++
 				}
 			}
@@ -26,6 +26,10 @@ func traverseHTMLDoc(n *html.Node, textView *tview.TextView) int {
 					numLinks++
 				}
 			}
+		case "h1", "h2", "h3", "h4", "h5", "h6":
+			fmt.Fprintf(textView, `[yellow]`)
+		default:
+			fmt.Fprintf(textView, `[white]`)
 		}
 	} else if n.Type == html.TextNode {
 		fmt.Fprintf(textView, "%s", n.Data)
@@ -39,15 +43,8 @@ func traverseHTMLDoc(n *html.Node, textView *tview.TextView) int {
 func fetchHTMLContent(URL string, textView *tview.TextView) {
 	textView.Clear()
 	numLinks = 0
-	// rawURL := getGitHubMdURL(URL)
-	contents := getGHReadme("openshift", "ops-sop", "backporting.md")
-	// resp, err := http.Get(rawURL)
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// 	return
-	// }
-	// defer resp.Body.Close()
-
+	owner, repo, path := getGitHubMdURL(URL)
+	contents := getGHReadme(owner, repo, path)
 	body := convertMarkdownToHTML(contents)
 
 	// Parse the HTML file

@@ -10,24 +10,37 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-func getGitHubMdURL(URL string) string {
+func getGitHubMdURL(URL string) (owner, repo, path string) {
 	end := URL[len(URL)-3:]
 	host := URL[8:18]
 	if host == "github.com" && end == ".md" {
-		newURL := "https://raw.githubusercontent.com" + URL[18:]
-		newURL = strings.ReplaceAll(newURL, "/blob", "")
-		return newURL
+		owner, repo := getOwnerAndRepoName(URL)
+		path := getReadmePath(URL)
+		return owner, repo, path
 	}
-	return URL
+	return URL, "", ""
+}
+
+func getOwnerAndRepoName(str string) (owner, repo string) {
+	startS, endS := ".com/", "/blob"
+	s := strings.Index(str, startS)
+	newS := str[s+len(startS):]
+	e := strings.Index(newS, endS)
+	result := newS[:e]
+	combined := strings.SplitN(result, "/", -1)
+	return combined[0], combined[1]
+}
+
+func getReadmePath(str string) string {
+	e := strings.Index(str, "/blob/")
+	result := str[e+len("/blob/"):]
+	combined := strings.SplitN(result, "/", 2)
+	return combined[1]
 }
 
 func convertMarkdownToHTML(body string) io.Reader {
-	// md, err := io.ReadAll(body)
-	// if err != nil {
-	// 	panic(err)
-	// }
 	md := []byte(body)
-	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+	extensions := parser.CommonExtensions
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(md)
 

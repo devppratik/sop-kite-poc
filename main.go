@@ -20,10 +20,10 @@ func main() {
 
 		// fetchHTMLContent("https://github.com/openshift/hive/blob/v1/docs/architecture.md", textView)
 		// URL https://github.com/openshift/ops-sop/blob/master/backporting.md
-	
-	fetchHTMLContent("https://github.com/openshift/installer", textView)
 
-	textView.Highlight("0").ScrollToHighlight()
+	fetchHTMLContent("https://github.com/openshift/ops-sop/blob/master/team_guides/Thor/Onboarding.md", textView)
+
+	textView.Highlight("0")
 
 	// Input Handling
 	textView.SetDoneFunc(func(key tcell.Key) {
