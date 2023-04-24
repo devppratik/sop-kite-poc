@@ -21,11 +21,12 @@ func getGitHubMdURL(URL string) string {
 	return URL
 }
 
-func convertMarkdownToHTML(body io.ReadCloser) io.Reader {
-	md, err := io.ReadAll(body)
-	if err != nil {
-		panic(err)
-	}
+func convertMarkdownToHTML(body string) io.Reader {
+	// md, err := io.ReadAll(body)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	md := []byte(body)
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(md)

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/rivo/tview"
 	"golang.org/x/net/html"
@@ -40,15 +39,16 @@ func traverseHTMLDoc(n *html.Node, textView *tview.TextView) int {
 func fetchHTMLContent(URL string, textView *tview.TextView) {
 	textView.Clear()
 	numLinks = 0
-	rawURL := getGitHubMdURL(URL)
-	resp, err := http.Get(rawURL)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	defer resp.Body.Close()
+	// rawURL := getGitHubMdURL(URL)
+	contents := getGHReadme("openshift", "ops-sop", "backporting.md")
+	// resp, err := http.Get(rawURL)
+	// if err != nil {
+	// 	fmt.Println("Error:", err)
+	// 	return
+	// }
+	// defer resp.Body.Close()
 
-	body := convertMarkdownToHTML(resp.Body)
+	body := convertMarkdownToHTML(contents)
 
 	// Parse the HTML file
 	doc, err := html.Parse(body)
@@ -56,4 +56,17 @@ func fetchHTMLContent(URL string, textView *tview.TextView) {
 		panic(err)
 	}
 	traverseHTMLDoc(doc, textView)
+
+	// TODO : Work on Parsing Non Markdown Files
+	// doc, err := html.Parse(body)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// traverseHTMLDoc(doc, textView)
+	// text, err := html2text.FromHTMLNode(doc, html2text.Options{})
+	// fmt.Println(text)
+	// fmt.Fprint(textView, text)
+	// if err != nil {
+	// 	panic(err)
+	// }
 }
